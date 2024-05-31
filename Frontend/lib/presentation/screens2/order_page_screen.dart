@@ -29,7 +29,6 @@ class OrderPage extends ConsumerStatefulWidget {
   @override
   _OrderPageState createState() => _OrderPageState();
 }
-
 class _OrderPageState extends ConsumerState<OrderPage> {
   late TextEditingController _amountController;
   late TextEditingController _dateController;
@@ -66,6 +65,78 @@ class _OrderPageState extends ConsumerState<OrderPage> {
     return prefs.getString('token');
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.isEditing ? 'Edit Order' : 'Create Order'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            context.go('/main_pharma_page', extra: {'isPharmacist': false, 'user_id': widget.user_id});// Use context.pop() instead of Navigator.pop
+          },
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SizedBox(height: 40.0),
+            TextField(
+              controller: _amountController,
+              decoration: InputDecoration(labelText: 'Amount'),
+              keyboardType: TextInputType.number,
+            ),
+            SizedBox(height: 30.0),
+            TextField(
+              controller: _dateController,
+              decoration: InputDecoration(labelText: 'Date'),
+              onTap: () async {
+                DateTime? pickedDate = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime.now().subtract(Duration(days: 365)),
+                  lastDate: DateTime.now().add(Duration(days: 365)),
+                );
+                if (pickedDate != null) {
+                  String formattedDate = "${pickedDate.year}-${pickedDate.month}-${pickedDate.day}";
+                  _dateController.text = formattedDate;
+                }
+              },
+            ),
+            SizedBox(height: 35.0),
+            ElevatedButton(
+              onPressed: () {
+                String quantity = _amountController.text.trim();
+                String date = _dateController.text.trim();
+
+                if (quantity.isEmpty || date.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please fill all fields')),
+                  );
+                } else {
+                  if (widget.isEditing) {
+                    updateOrder(quantity, date);
+                  } else {
+                    createOrder(quantity, date);
+                  }
+                }
+              },
+              child: Text(widget.isEditing ? 'Edit' : 'Create',
+                  style: TextStyle(color: Colors.lightGreen)),
+              style: ButtonStyle(
+                side: MaterialStateProperty.all(
+                  BorderSide(color: Colors.lightGreen, width: 2),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+
+  }
   Future<void> createOrder(String quantity, String date) async {
     final String medicineId = widget.medicineId!;
     final token = await getToken();
@@ -139,75 +210,4 @@ class _OrderPageState extends ConsumerState<OrderPage> {
 
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.isEditing ? 'Edit Order' : 'Create Order'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            context.go('/main_pharma_page', extra: {'isPharmacist': false, 'user_id': widget.user_id});// Use context.pop() instead of Navigator.pop
-          },
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(height: 40.0),
-            TextField(
-              controller: _amountController,
-              decoration: InputDecoration(labelText: 'Amount'),
-              keyboardType: TextInputType.number,
-            ),
-            SizedBox(height: 30.0),
-            TextField(
-              controller: _dateController,
-              decoration: InputDecoration(labelText: 'Date'),
-              onTap: () async {
-                DateTime? pickedDate = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime.now().subtract(Duration(days: 365)),
-                  lastDate: DateTime.now().add(Duration(days: 365)),
-                );
-                if (pickedDate != null) {
-                  String formattedDate = "${pickedDate.year}-${pickedDate.month}-${pickedDate.day}";
-                  _dateController.text = formattedDate;
-                }
-              },
-            ),
-            SizedBox(height: 35.0),
-            ElevatedButton(
-              onPressed: () {
-                String quantity = _amountController.text.trim();
-                String date = _dateController.text.trim();
-
-                if (quantity.isEmpty || date.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Please fill all fields')),
-                  );
-                } else {
-                  if (widget.isEditing) {
-                    updateOrder(quantity, date);
-                  } else {
-                    createOrder(quantity, date);
-                  }
-                }
-              },
-              child: Text(widget.isEditing ? 'Edit' : 'Create',
-                  style: TextStyle(color: Colors.lightGreen)),
-              style: ButtonStyle(
-                side: MaterialStateProperty.all(
-                  BorderSide(color: Colors.lightGreen, width: 2),
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
 }

@@ -1,4 +1,3 @@
-
 class Order {
   final String id;
   final String medicineTitle;
@@ -22,15 +21,15 @@ class Order {
     String? date,
     String? userId,
     String? medId,
-    String? quantity
+    String? quantity,
   }) {
     return Order(
       id: id ?? this.id,
       medicineTitle: medicineTitle ?? this.medicineTitle,
-      date: date ?? this.date ,
+      date: date ?? this.date,
       userId: userId ?? this.userId,
       medId: medId ?? this.medId,
-      quantity: quantity ?? this.quantity
+      quantity: quantity ?? this.quantity,
     );
   }
 
@@ -51,4 +50,27 @@ class Order {
     'date': date,
     'quantity': quantity,
   };
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Order &&
+        other.id == id &&
+        other.medicineTitle == medicineTitle &&
+        other.date == date &&
+        other.userId == userId &&
+        other.medId == medId &&
+        other.quantity == quantity;
+  }
+
+  @override
+  int get hashCode {
+    return id.hashCode ^
+    medicineTitle.hashCode ^
+    date.hashCode ^
+    userId.hashCode ^
+    medId.hashCode ^
+    quantity.hashCode;
+  }
 }

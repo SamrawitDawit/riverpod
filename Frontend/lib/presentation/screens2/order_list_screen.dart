@@ -9,90 +9,6 @@ import 'package:newcompiled/presentation/widget/KendilAppBar.dart';
 import 'package:http/http.dart' as http;
 import 'package:newcompiled/presentation/screens/create_or_edit_order.dart';
 
-
-class OrderScreen extends ConsumerWidget {
-  final bool is_user;
-  final String user_id;
-
-  const OrderScreen({
-    Key? key,
-    required this.is_user,
-    required this.user_id,
-  }) : super(key: key);
-
-  Future<void> deleteOrder(WidgetRef ref, String orderId) async {
-    final response = await http.delete(Uri.parse('http://10.0.2.2:3000/orders/$orderId'));
-    if (response.statusCode == 200) {
-      ref.refresh(ordersProvider(user_id));
-    } else {
-      throw Exception('Failed to delete order');
-    }
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final ordersAsyncValue = is_user
-        ? ref.watch(ordersProvider(user_id))
-        : ref.watch(allOrdersProvider);
-
-    return ordersAsyncValue.when(
-      data: (orders) {
-        if (orders.isEmpty) {
-          return Scaffold(
-            appBar: KendilAppBar(title: Text('My Orders')),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.shopping_cart, size: 64, color: Colors.grey),
-                  SizedBox(height: 16),
-                  Text(
-                    'No orders found.',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-
-        return Scaffold(
-          appBar: AppBar(
-            title: Text('My Orders'),
-            leading: IconButton(
-              icon: Icon(Icons.arrow_back),
-              onPressed: () {
-                context.go('/main_pharma_page', extra: {'isPharmacist': !is_user, 'user_id': user_id});
-              },
-            ),
-          ),
-          body: Padding(
-            padding: EdgeInsets.all(12.0),
-            child: ListView.separated(
-              shrinkWrap: true,
-              itemCount: orders.length,
-              separatorBuilder: (_, __) => SizedBox(height: 10),
-              itemBuilder: (_, index) => OrderCard(
-                order: orders[index],
-                isUser: is_user,
-                onDelete: () => deleteOrder(ref, orders[index].id),
-              ),
-            ),
-          ),
-        );
-      },
-      loading: () => Scaffold(
-        appBar: KendilAppBar(title: Text('My Orders')),
-        body: Center(child: CircularProgressIndicator()),
-      ),
-      error: (error, stack) => Scaffold(
-        appBar: KendilAppBar(title: Text('My Orders')),
-        body: Center(child: Text('Error: $error')),
-      ),
-    );
-  }
-}
-
 class OrderCard extends StatelessWidget {
   final Order order;
   final bool isUser;
@@ -182,5 +98,88 @@ class OrderCard extends StatelessWidget {
         ],
       ),
     );
+
+  }
+
+}
+class OrderScreen extends ConsumerWidget {
+  final bool is_user;
+  final String user_id;
+
+  const OrderScreen({
+    Key? key,
+    required this.is_user,
+    required this.user_id,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ordersAsyncValue = is_user
+        ? ref.watch(ordersProvider(user_id))
+        : ref.watch(allOrdersProvider);
+
+    return ordersAsyncValue.when(
+      data: (orders) {
+        if (orders.isEmpty) {
+          return Scaffold(
+            appBar: KendilAppBar(title: Text('My Orders')),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.shopping_cart, size: 64, color: Colors.grey),
+                  SizedBox(height: 16),
+                  Text(
+                    'No orders found.',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('My Orders'),
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                context.go('/main_pharma_page', extra: {'isPharmacist': !is_user, 'user_id': user_id});
+              },
+            ),
+          ),
+          body: Padding(
+            padding: EdgeInsets.all(12.0),
+            child: ListView.separated(
+              shrinkWrap: true,
+              itemCount: orders.length,
+              separatorBuilder: (_, __) => SizedBox(height: 10),
+              itemBuilder: (_, index) => OrderCard(
+                order: orders[index],
+                isUser: is_user,
+                onDelete: () => deleteOrder(ref, orders[index].id),
+              ),
+            ),
+          ),
+        );
+      },
+      loading: () => Scaffold(
+        appBar: KendilAppBar(title: Text('My Orders')),
+        body: Center(child: CircularProgressIndicator()),
+      ),
+      error: (error, stack) => Scaffold(
+        appBar: KendilAppBar(title: Text('My Orders')),
+        body: Center(child: Text('Error: $error')),
+      ),
+    );
+  }
+  Future<void> deleteOrder(WidgetRef ref, String orderId) async {
+    final response = await http.delete(Uri.parse('http://10.0.2.2:3000/orders/$orderId'));
+    if (response.statusCode == 200) {
+      ref.refresh(ordersProvider(user_id));
+    } else {
+      throw Exception('Failed to delete order');
+    }
   }
 }
