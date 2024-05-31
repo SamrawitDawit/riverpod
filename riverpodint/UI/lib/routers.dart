@@ -109,7 +109,7 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       path: '/user_account_edit',
-      builder: (context, state) => UserAccountEditPage(),
+      builder: (context, state) => UserAccountEditPage(userId: 'userID',),
     ),
   ],
 );
