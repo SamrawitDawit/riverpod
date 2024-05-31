@@ -11,8 +11,6 @@ class OrderRepositoryImpl implements OrderRepository {
 
   OrderRepositoryImpl(this.dataSource);
 
-
-
   @override
   Future<List<Order>> getOrders() async {
     final data = await dataSource.fetchOrders();
@@ -23,6 +21,18 @@ class OrderRepositoryImpl implements OrderRepository {
   Future<List<Order>> getOrdersByUserId(String userId) async {
     final data = await dataSource.fetchOrdersByUserId(userId);
     return await _mapOrdersWithMedicineTitles(data);
+  }
+  @override
+  Future<void> createOrder(Order order) async {
+    await dataSource.createOrder(order);
+  }
+  @override
+  Future<void> editOrder(Order order) async {
+    await dataSource.editOrder(order);
+  }
+  @override
+  Future<void> deleteOrder(String orderId) async {
+    await dataSource.deleteOrder(orderId);
   }
 
   Future<List<Order>> _mapOrdersWithMedicineTitles(List<Map<String, dynamic>> data) async {
@@ -43,20 +53,6 @@ class OrderRepositoryImpl implements OrderRepository {
       throw Exception('Failed to load medicine');
     }
   }
-  @override
-  Future<void> createOrder(Order order) async {
-    await dataSource.createOrder(order);
-  }
-  @override
-  Future<void> deleteOrder(String orderId) async {
-    await dataSource.deleteOrder(orderId);
-  }
 
-
-
-  @override
-  Future<void> editOrder(Order order) async {
-    await dataSource.editOrder(order);
-  }
 }
 
