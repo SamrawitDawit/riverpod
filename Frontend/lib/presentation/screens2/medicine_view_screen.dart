@@ -96,7 +96,7 @@ class MedicineViewPage extends ConsumerWidget {
                       ref.read(medicineIdProvider.notifier).state = medicineItem.id;
 
                       // Navigate to the Edit Medicine page
-                      context.go('/edit_medicine');
+                      context.go('/edit_medicine?userId=${user_id}');
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.lightGreen,

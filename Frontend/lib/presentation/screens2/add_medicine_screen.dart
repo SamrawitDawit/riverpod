@@ -40,7 +40,7 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
-              GoRouter.of(context).pop();// Use context.pop() instead of Navigator.pop
+              context.go('/main_pharma_page', extra: {'isPharmacist': true, 'user_id': widget.user_id});// Use context.pop() instead of Navigator.pop
             },
           ),
           title: Text('Add Medicine')
@@ -90,6 +90,7 @@ class _AddMedicineScreenState extends ConsumerState<AddMedicineScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Medicine added successfully')),
                   );
+                  context.go('/main_pharma_page', extra: {'isPharmacist': true, 'user_id': widget.user_id});
                 } catch (e) {
                   print(e);
                   ScaffoldMessenger.of(context).showSnackBar(

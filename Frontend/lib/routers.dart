@@ -66,7 +66,8 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/edit_medicine',
       builder: (context, state) {
-        return EditMedicineScreen();
+        final user_id = state.queryParams['userId']!;
+        return EditMedicineScreen(user_id: user_id);
       },
     ),
     GoRoute(

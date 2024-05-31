@@ -84,6 +84,7 @@ final editOrderProvider = FutureProvider.family<void, Order>((ref, order) async 
 
 final medicineIdProvider = StateProvider<String?>((ref) => null);
 final orderIdProvider = StateProvider<String?>((ref) => null);
+final userIdProvider = StateProvider<String?>((ref)=> null);
 
 Future<String> fetchMedicineTitle(String medId) async {
   final response = await http.get(Uri.parse('http://10.0.2.2:3000/medicines/$medId'));
@@ -91,10 +92,11 @@ Future<String> fetchMedicineTitle(String medId) async {
     final data = jsonDecode(response.body);
     return data['title'];
   } else {
-    print(response.body);
+    print('Failed to load medicine: ${response.statusCode} ${response.body}');
     throw Exception('Failed to load medicine');
   }
 }
+
 final ordersProvider = FutureProvider.family<List<Order>, String>((ref, userId) async {
 
   final response = await http.get(Uri.parse('http://10.0.2.2:3000/orders/all'));
@@ -132,14 +134,20 @@ final allOrdersProvider = FutureProvider<List<Order>>((ref) async {
     final List<dynamic> data = jsonDecode(response.body);
     List<Order> orders = [];
     for (var item in data) {
-      String medicineTitle = await fetchMedicineTitle(item['medicineId']);
-      orders.add(Order.fromJson(item, medicineTitle));
+      try {
+        String medicineTitle = await fetchMedicineTitle(item['medicineId']);
+        orders.add(Order.fromJson(item, medicineTitle));
+      } catch (e) {
+        print('Error fetching medicine title: $e');
+        orders.add(Order.fromJson(item, 'Unknown')); // Handle missing title
+      }
     }
     return orders;
   } else {
     throw Exception('Failed to load orders');
   }
 });
+
 final editMedicineProvider = FutureProvider.family<void, Medicine>((ref, form) async {
   final response = await http.put(
     Uri.parse('http://10.0.2.2:3000/medicines/${form.id}'),  // Assuming PUT request for editing

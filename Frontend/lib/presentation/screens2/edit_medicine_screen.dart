@@ -3,27 +3,30 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:newcompiled/Infrastructure/providers/providers.dart';
 import 'package:newcompiled/domain/entitites/medicine_form.dart';
-import 'package:newcompiled/presentation/screens/providers/providers.dart';
-import '../widget/KendilAppBar.dart';
+
 
 class EditMedicineScreen extends ConsumerWidget {
+  final String user_id;
+
   final TextEditingController nameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
   final TextEditingController typeController = TextEditingController();
   final TextEditingController manufacturerController = TextEditingController();
-
+  EditMedicineScreen({required this.user_id});
   @override
+
   Widget build(BuildContext context, WidgetRef ref) {
     // Retrieve the medicineId from the provider
     final medicineId = ref.watch(medicineIdProvider);
+
 
     return Scaffold(
       appBar: AppBar(title: Text('Edit Medicine'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            GoRouter.of(context).pop(); // Use context.pop() instead of Navigator.pop
+            context.go('/main_pharma_page', extra: {'isPharmacist': true, 'user_id': user_id});// Use context.pop() instead of Navigator.pop
           },
         ),
       ),
@@ -77,6 +80,7 @@ class EditMedicineScreen extends ConsumerWidget {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Medicine edited successfully')),
                   );
+                  context.go('/main_pharma_page', extra: {'isPharmacist': true, 'user_id': user_id});
 
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -111,7 +115,9 @@ class EditMedicineScreen extends ConsumerWidget {
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Medicine deleted successfully')),
+
                   );
+                  context.go('/main_pharma_page', extra: {'isPharmacist': true, 'user_id': user_id});
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Failed to delete medicine')),

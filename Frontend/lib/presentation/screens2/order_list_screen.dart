@@ -57,13 +57,15 @@ class OrderScreen extends ConsumerWidget {
         }
 
         return Scaffold(
-          appBar: AppBar(title: Text('My Orders'),
-              leading: IconButton(
+          appBar: AppBar(
+            title: Text('My Orders'),
+            leading: IconButton(
               icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            context.go('/main_pharma_page', extra: {'isPharmacist': !is_user, 'user_id': user_id}); // Use context.pop() instead of Navigator.pop
-          },
-        ),),
+              onPressed: () {
+                context.go('/main_pharma_page', extra: {'isPharmacist': !is_user, 'user_id': user_id});
+              },
+            ),
+          ),
           body: Padding(
             padding: EdgeInsets.all(12.0),
             child: ListView.separated(
@@ -73,16 +75,20 @@ class OrderScreen extends ConsumerWidget {
               itemBuilder: (_, index) => OrderCard(
                 order: orders[index],
                 isUser: is_user,
-
-
                 onDelete: () => deleteOrder(ref, orders[index].id),
               ),
             ),
           ),
         );
       },
-      loading: () => Center(child: CircularProgressIndicator()),
-      error: (error, stack) => Center(child: Text('Error: $error')),
+      loading: () => Scaffold(
+        appBar: KendilAppBar(title: Text('My Orders')),
+        body: Center(child: CircularProgressIndicator()),
+      ),
+      error: (error, stack) => Scaffold(
+        appBar: KendilAppBar(title: Text('My Orders')),
+        body: Center(child: Text('Error: $error')),
+      ),
     );
   }
 }

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:newcompiled/presentation/screens2/list_medicine_screen.dart';
-import 'package:newcompiled/presentation/screens2/order_list_screen.dart';
 import 'package:newcompiled/presentation/screens2/pharmacat.dart';
-import 'package:newcompiled/presentation/screens2/user_account._screen.dart';
-import '../widget/KendilAppBar.dart';
 import '../widget/bottomnav.dart';
 import 'package:go_router/go_router.dart';
 
